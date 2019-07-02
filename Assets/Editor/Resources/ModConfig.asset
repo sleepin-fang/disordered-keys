@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 615501dbe4f3fe94fbf4b564abb10237, type: 3}
+  m_Name: ModConfig
+  m_EditorClassIdentifier: 
+  id: disorderedKeys
+  title: Disordered Keys
+  author: Speakingevil
+  description: "Disordered Keys ver 1.0\nT\u040B\u044D\u0219\u04E1 \u051F\u0511\u04B1s
+    \u053C\u04EB\u04E7\u049F \u01E2 1\u0268\u0373\u03EF\u0538\u04D9 \u0189i\u03DD\u04FB\u0454\u044F\u03F5\u043F\u03C4.
+    D\u0196\u018B \u023E\u0267\u0247\u02AE \u029F\xF8\u03DB\u03BE \u02AC\u0207\u026A\u029B\u029C\u0167?\n\nPress
+    the six keys in order based on their colours, positions, numbers, and the information
+    missing from each key.\n\nModule ID: disorderedKeys\n\nCreated by Speakingevil"
+  version: 1.0
+  outputFolder: build
+  previewImage: {fileID: 2800000, guid: 0f392a5dd344b0f438779797c434db66, type: 3}

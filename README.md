@@ -1,1 +1,1 @@
-# disordered-keys
+#[ModKit Wiki](../../wiki)
