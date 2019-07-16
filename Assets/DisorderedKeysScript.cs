@@ -500,7 +500,7 @@ public class DisorderedKeysScript : MonoBehaviour
             yield return new WaitForSeconds(1.2f);
         }
     } 
-    public string TwitchHelpMessage = "Use '!{0} press 1 2 3 4' to press key 1, 2 3 & 4! BUT, for time keys use '!{0} press x at y'! For ex. '{0} press 1 at 22' will press the 1st key when the senonds digits are 22. Don't chain non-time and time keys together!";
+    public string TwitchHelpMessage = "Use '!{0} press 1 2 3 4' to press key 1, 2 3 & 4! BUT, for time keys use '!{0} press x at y'! For ex. '{0} press 1 at 22' will press the 1st key when the senonds digits are 22. Put every time key into separate commands and don't chain it together with other keys!";
     IEnumerator ProcessTwitchCommand(string command)
     {
         string commfinal=command.Replace("press ", "");
