@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -498,6 +498,69 @@ public class DisorderedKeysScript : MonoBehaviour
                 i = -1;
             }
             yield return new WaitForSeconds(1.2f);
+        }
+    } 
+    public string TwitchHelpMessage = "Use '!{0} press 1 2 3 4' to press key 1, 2 3 & 4! BUT, for time keys use '!{0} press x at y'! For ex. '{0} press 1 at 22' will press the 1st key when the senonds digits are 22. Don't chain not time and time keys!";
+    IEnumerator ProcessTwitchCommand(string command)
+    {
+        string commfinal=command.Replace("press ", "");
+        if(commfinal.Contains("at")){
+            string commfinal2=commfinal.Replace("at ", "");
+            string[] digitstring = commfinal2.Split(' ');
+            int tried;
+            if(int.TryParse(digitstring[0], out tried) && int.TryParse(digitstring[1], out tried)){
+                int buttonindex=int.Parse(digitstring[0]);
+                int timer = int.Parse(digitstring[1]);
+                yield return null;
+                while (Mathf.FloorToInt(bomb.GetTime()) % 60 != timer) yield return "trycancel Button wasn't pressed due to request to cancel.";
+                yield return null;
+                yield return keys[buttonindex-1];
+                yield return keys[buttonindex-1];
+            }
+            else{           //invalid digit
+                yield return null;
+                yield return "sendtochaterror Digit not valid.";
+                yield break;
+            }
+        }
+        else{
+            string[] digitstring = commfinal.Split(' ');
+            int tried;
+            int index = 1;
+            foreach(string digit in digitstring){
+                if(int.TryParse(digit, out tried)){
+                    tried=int.Parse(digit);
+                    if(tried<=6){
+                        if(tried>=1){
+                            if(index<7){  
+                            yield return null;
+                            yield return keys[tried-1];
+                            yield return keys[tried-1];
+                            }
+                            else{       //no more buttons to press
+                                yield return null;
+                                yield return "sendtochaterror Too many digits!";
+                                yield break;
+                            }
+                        }
+                        else{       //small
+                            yield return null;
+                            yield return "sendtochaterror Digit too small!";
+                            yield break;
+                        }
+                    }
+                    else{       //big
+                        yield return null;
+                        yield return "sendtochaterror Digit too big!";
+                        yield break;
+                    }
+                }
+                else{       //invalid digit
+                yield return null;
+                yield return "sendtochaterror Digit not valid.";
+                yield break;
+            }
+            }
         }
     }
 }
