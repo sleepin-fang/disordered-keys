@@ -508,8 +508,18 @@ public class DisorderedKeysScript : MonoBehaviour
             string commfinal2=commfinal.Replace("at ", "");
             string[] digitstring = commfinal2.Split(' ');
             int tried;
+            if(digitstring.Length<2){
+                yield return null;
+                yield return "sendtochaterror Not enough numbers!";
+                yield break;
+               }
             if(int.TryParse(digitstring[0], out tried) && int.TryParse(digitstring[1], out tried)){
                 int buttonindex=int.Parse(digitstring[0]);
+                if(buttonindex>6 || buttonindex<1){
+                    yield return null;
+                    yield return "sendtochaterror Number out of range!";
+                    yield break;
+                   }
                 int timer = int.Parse(digitstring[1]);
                 yield return null;
                 while (Mathf.FloorToInt(bomb.GetTime()) % 60 != timer) yield return "trycancel Button wasn't pressed due to request to cancel.";
