@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class DisorderedKeysScript : MonoBehaviour
@@ -500,76 +501,39 @@ public class DisorderedKeysScript : MonoBehaviour
             yield return new WaitForSeconds(1.2f);
         }
     } 
-    public string TwitchHelpMessage = "Use '!{0} press 1 2 3 4' to press key 1, 2 3 & 4! BUT, for time keys use '!{0} press x at y'! For ex. '{0} press 1 at 22' will press the 1st key when the senonds digits are 22. Put every time key into separate commands and don't chain it together with other keys!";
+    public string TwitchHelpMessage = "Use '!{0} press <key> <on/at XX>. Command is chainable with semicolon(;), time commands is optional.";
     IEnumerator ProcessTwitchCommand(string command)
     {
-        string commfinal=command.Replace("press ", "");
-        if(commfinal.Contains("at")){
-            string commfinal2=commfinal.Replace("at ", "");
-            string[] digitstring = commfinal2.Split(' ');
-            int tried;
-            if(digitstring.Length<2){
-                yield return null;
-                yield return "sendtochaterror Not enough numbers!";
-                yield break;
-               }
-            if(int.TryParse(digitstring[0], out tried) && int.TryParse(digitstring[1], out tried)){
-                int buttonindex=int.Parse(digitstring[0]);
-                if(buttonindex>6 || buttonindex<1){
-                    yield return null;
-                    yield return "sendtochaterror Number out of range!";
-                    yield break;
-                   }
-                int timer = int.Parse(digitstring[1]);
-                yield return null;
-                while (Mathf.FloorToInt(bomb.GetTime()) % 60 != timer) yield return "trycancel Button wasn't pressed due to request to cancel.";
-                yield return null;
-                yield return keys[buttonindex-1];
-                yield return keys[buttonindex-1];
-            }
-            else{           //invalid digit
-                yield return null;
-                yield return "sendtochaterror Digit not valid.";
-                yield break;
-            }
+
+        if (Regex.IsMatch(command, @"^\s*colorblind\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            colorblind = true;
+            for (int i = 0; i < keys.Count; i++)
+                setKey(i);
+            yield return null;
+            yield break;
         }
-        else{
-            string[] digitstring = commfinal.Split(' ');
-            int tried;
-            int index = 1;
-            foreach(string digit in digitstring){
-                if(int.TryParse(digit, out tried)){
-                    tried=int.Parse(digit);
-                    if(tried<=6){
-                        if(tried>=1){
-                            if(index<7){  
-                            yield return null;
-                            yield return keys[tried-1];
-                            yield return keys[tried-1];
-                            }
-                            else{       //no more buttons to press
-                                yield return null;
-                                yield return "sendtochaterror Too many digits!";
-                                yield break;
-                            }
-                        }
-                        else{       //small
-                            yield return null;
-                            yield return "sendtochaterror Digit too small!";
-                            yield break;
-                        }
-                    }
-                    else{       //big
-                        yield return null;
-                        yield return "sendtochaterror Digit too big!";
-                        yield break;
-                    }
+        else
+        {
+            string[] inputs = command.Split(';');
+            foreach (string input in inputs) {
+                var m = Regex.Match(input, @"^(?:press\s*)?\s*([123456 ]+)\s*((?:(?:on [0-5][0-9]|at [0-5][0-9])))?$");
+                if (!m.Success || (m.Groups[1].Value.Replace(" ", "").Length > 1 && m.Groups[2].Success))
+                    yield break;
+                else if (m.Groups[2].Success) {
+                    int key = int.Parse(m.Groups[1].Value);
+                    int timer = int.Parse(m.Groups[2].Value.ToString().Replace("on", "").Replace("at", "").Replace(" ", ""));
+                    yield return null;
+                    while (Mathf.FloorToInt(bomb.GetTime()) % 60 != timer) yield return "trycancel Button wasn't pressed due to request to cancel.";
+                    yield return keys[key - 1];
                 }
-                else{       //invalid digit
-                yield return null;
-                yield return "sendtochaterror Digit not valid.";
-                yield break;
-            }
+                else foreach (var keyToPress in m.Groups[1].Value.Where(ch => ch >= '1' && ch <= '6').Select(ch => keys[ch - '1']))
+                {
+                    yield return null;
+                    while (!pressable)
+                        yield return "trycancel";
+                    keyToPress.OnInteract(); 
+                }
             }
         }
     }
